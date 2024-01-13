@@ -59,13 +59,18 @@ pipeline {
       steps {
         script {
           dir('EKS') {
-            def userInput = input(
-              id: 'userInput',
-              message: 'Select action:',
-              parameters: [choice(name: 'Action', choices: 'Apply\nDestroy', description: 'Select action to perform')]
-            )
-            def action = userInput == 'Apply' ? 'apply' : 'destroy'
             sh "terraform $action --auto-approve"
+          }
+        }
+      }
+    }
+    stage ('Deploying Nginx Application') {
+      steps {
+        script {
+          dir('EKS/ConfigurationFiles') {
+            sh 'aws eks update-kubeconfig --name my-eks-cluster'
+            sh 'kubectl apply -f deployment.yaml'
+            sh 'kubectl apply -f service.yaml'
           }
         }
       }
