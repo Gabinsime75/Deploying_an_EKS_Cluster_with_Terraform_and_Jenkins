@@ -51,7 +51,6 @@ pipeline {
           dir('EKS') {
             sh 'terraform plan'
           }
-          input(message: "Do you want to proceed", ok: "Proceed")
         }
       }
     }
